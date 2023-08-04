@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+  <link rel="stylesheet" href="../login.css">
+</head>
+<body>
+  <div>
+    <center>
+      <font face="宋体">
+        <h1>登录界面</h1>
+      </font>
+    </center>
+  </div>
+  <form class="login-form" th:action="@{/login/submit}" method="post">
+    用户名：<input type="text" name="username"></br>
+    密码：<input type="password" name="password"></br>
+    <input class="login-form-button" type="submit" value="登录">
+  </form>
+</body>
+</html>
