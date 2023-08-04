@@ -41,10 +41,13 @@ public class MyFilter implements Filter {
         if (token != null) { //校验token
             String username = JWTUtils.parseToken(token).getSubject(); //获取的token中的用户名
             if (username.equals(userDetails.getToken(token))) { //如果用户名相同，则校验成功
-                filterChain.doFilter(servletRequest, servletResponse); //放行
+                filterChain.doFilter(servletRequest, servletResponse); //放行，放行后不能再重定向，否则会报错
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login"); //重定向到登陆界面
             }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/login"); //重定向到登陆界面
         }
-        response.sendRedirect(request.getContextPath() + "/login");
     }
 
     @Override

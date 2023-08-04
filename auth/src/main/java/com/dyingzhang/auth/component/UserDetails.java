@@ -9,6 +9,7 @@ import java.util.Map;
  * @author DyingZhang
  * @date 2023-08-04 下午 10:45
  * @discription
+ * 存放用户token
  */
 @Component
 public class UserDetails {

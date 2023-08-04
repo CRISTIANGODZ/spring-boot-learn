@@ -39,7 +39,7 @@ public class UserController {
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
         if (username.equals("zhangSan") && password.equals("123456")) { //模拟查数据库校验
-            String token = JWTUtils.generateToken(username); //签发token
+            String token = JWTUtils.generateToken(username, 86400000); //签发token，expiration为过期时间(ms)
             userDetails.addToken(token, username); //将token添加到userDetails
             request.getSession().setAttribute("token", token); //将token放到session中
             return new ModelAndView("success");

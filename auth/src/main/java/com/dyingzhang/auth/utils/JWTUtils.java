@@ -16,11 +16,11 @@ import java.util.Date;
 public class JWTUtils {
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public static String generateToken(String subject) {
+    public static String generateToken(String subject, int expiration) {
         return Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 hours
+                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // 24 hours
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
