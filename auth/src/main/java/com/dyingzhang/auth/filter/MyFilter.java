@@ -38,6 +38,7 @@ public class MyFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         String token = (String)session.getAttribute("token"); //获取token
+
         if (token != null) { //校验token
             String username = JWTUtils.parseToken(token).getSubject(); //获取的token中的用户名
             if (username.equals(userDetails.getToken(token))) { //如果用户名相同，则校验成功
