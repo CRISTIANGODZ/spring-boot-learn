@@ -23,6 +23,9 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    public static final int ACCESS_TOKEN_EXPIRATION = 5000; //5分钟
+    public static final int REFRESH_TOKEN_EXPIRATION = 300000; //5分钟
+
     /**
      * 存放用户token，分布式服务可以放到redis（推荐） / mysql
      */
@@ -46,9 +49,12 @@ public class UserServiceImpl implements UserService {
         //遍历匹配密码
         for (UserAuth user : userList) {
             if (username.equals(user.getUsername()) && BCrypt.checkpw(password, user.getPassword())) {
-                String token = JWTUtils.generateToken(username, 86400000); //签发token，expiration为过期时间(ms)
-                userDetails.addToken(token, username); //将token添加到userDetails
-                request.getSession().setAttribute("token", token); //将token放到session中
+                String accessToken = JWTUtils.generateToken(username, ACCESS_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
+                String refreshToken = JWTUtils.generateToken(username, REFRESH_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
+                userDetails.addToken(accessToken, username); //将token添加到userDetails
+                userDetails.addRefreshToken(refreshToken, username); //将refreshToken添加到userDetails
+                request.getSession().setAttribute("access_token", accessToken); //将token放到session中
+                request.getSession().setAttribute("refresh_token", refreshToken); //模拟将refreshToken返回前端，默认只返回一次
                 return true;
             }
         }

@@ -15,6 +15,7 @@ import java.util.Map;
 public class UserDetails {
 
     private Map<String, String> userMap = new HashMap<>();
+    private Map<String, String> refreshUserMap = new HashMap<>();
 
     public String getToken(String key) {
         return userMap.get(key);
@@ -22,6 +23,15 @@ public class UserDetails {
 
     public Boolean addToken(String key, String value) {
         userMap.put(key, value);
+        return true;
+    }
+
+    public String getRefreshToken(String key) {
+        return refreshUserMap.get(key);
+    }
+
+    public Boolean addRefreshToken(String key, String value) {
+        refreshUserMap.put(key, value);
         return true;
     }
 }

@@ -1,6 +1,8 @@
 package com.dyingzhang.auth.filter;
 
 import com.dyingzhang.auth.component.UserDetails;
+import com.dyingzhang.auth.controller.UserController;
+import com.dyingzhang.auth.service.impl.UserServiceImpl;
 import com.dyingzhang.auth.utils.JWTUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -37,17 +39,58 @@ public class MyFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
-        String token = (String)session.getAttribute("token"); //获取token
+        String accessToken = (String)session.getAttribute("access_token"); //获取token
 
-        if (token != null) { //校验token
-            String username = JWTUtils.parseToken(token).getSubject(); //获取的token中的用户名
-            if (username.equals(userDetails.getToken(token))) { //如果用户名相同，则校验成功
-                filterChain.doFilter(servletRequest, servletResponse); //放行，放行后不能再重定向，否则会报错
+        if (accessToken != null) { //校验access_token
+            if (!JWTUtils.isTokenExpired(accessToken)) { //access_token未过期
+                String username = JWTUtils.parseToken(accessToken).getSubject(); //获取的token中的用户名
+                if (username.equals(userDetails.getToken(accessToken))) {
+                    filterChain.doFilter(servletRequest, servletResponse); //放行，放行后不能再重定向，否则会报错
+                } else { //校验失败
+                    response.sendRedirect(request.getContextPath() + "/login");
+                }
             } else {
-                response.sendRedirect(request.getContextPath() + "/login"); //重定向到登陆界面
+                log.info("accessToken过期，寻找refreshToken");
+                checkRefreshToken(servletRequest, servletResponse, filterChain);
+            }
+        } else { //双token机制，若accessToken失效，应该返回401，然后前端重新请求时带上refreshToken，在此只是模拟，故总是带着双token
+            log.info("accessToken缺失，寻找refreshToken");
+            checkRefreshToken(servletRequest, servletResponse, filterChain);
+        }
+    }
+
+    /**
+     * refreshToken
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     */
+    public void checkRefreshToken(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        HttpSession session = request.getSession();
+        String refreshToken = (String)session.getAttribute("refresh_token"); //获取token
+
+        if (refreshToken != null) {
+            if (!JWTUtils.isTokenExpired(refreshToken)){
+                String username = JWTUtils.parseToken(refreshToken).getSubject(); //获取的token中的用户名
+                if (username.equals(userDetails.getRefreshToken(refreshToken))) { //校验token
+                    String newAccessToken = JWTUtils.generateToken(username, UserServiceImpl.ACCESS_TOKEN_EXPIRATION); //签发新的accessToken
+                    userDetails.addToken(newAccessToken, username); //将token添加到userDetails
+                    session.setAttribute("access_token", newAccessToken); //添加到session中
+                    filterChain.doFilter(servletRequest, servletResponse);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/login");
+                }
+            } else {
+                log.info("refreshToken过期，重新登陆");
+                response.sendRedirect(request.getContextPath() + "/login");
             }
         } else {
-            response.sendRedirect(request.getContextPath() + "/login"); //重定向到登陆界面
+            log.info("refreshToken消失，重新登陆");
+            response.sendRedirect(request.getContextPath() + "/login");
         }
     }
 
@@ -56,4 +99,6 @@ public class MyFilter implements Filter {
         log.info("过滤器被销毁");
         Filter.super.destroy();
     }
+
+
 }
