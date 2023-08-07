@@ -1,5 +1,6 @@
 package com.dyingzhang.auth.dao;
 
+import com.dyingzhang.auth.domain.dto.RegisterDTO;
 import com.dyingzhang.auth.domain.entity.UserAuth;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,4 +21,10 @@ public interface UserAuthMapper {
      * @return
      */
     List<UserAuth> getUserByChecking(@Param(value = "username") String username);
+
+    /**
+     * 用户注册
+     * @param registerDTO
+     */
+    void registerUser(RegisterDTO registerDTO);
 }

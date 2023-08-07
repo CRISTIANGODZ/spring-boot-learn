@@ -1,5 +1,7 @@
 package com.dyingzhang.auth.service;
 
+import com.dyingzhang.auth.domain.dto.RegisterDTO;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -10,4 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface UserService {
 
     Boolean loginDeal(String username, String password, HttpServletRequest request);
+
+    Boolean registeDeal(RegisterDTO registerDTO, HttpServletRequest request);
 }

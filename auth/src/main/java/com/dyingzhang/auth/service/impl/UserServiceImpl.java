@@ -2,13 +2,13 @@ package com.dyingzhang.auth.service.impl;
 
 import com.dyingzhang.auth.component.UserDetails;
 import com.dyingzhang.auth.dao.UserAuthMapper;
+import com.dyingzhang.auth.domain.dto.RegisterDTO;
 import com.dyingzhang.auth.domain.entity.UserAuth;
 import com.dyingzhang.auth.service.UserService;
 import com.dyingzhang.auth.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    public static final int ACCESS_TOKEN_EXPIRATION = 5000; //5分钟
+    public static final int ACCESS_TOKEN_EXPIRATION = 5000; //5秒
     public static final int REFRESH_TOKEN_EXPIRATION = 300000; //5分钟
 
     /**
@@ -59,5 +59,25 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+
+    @Override
+    public Boolean registeDeal(RegisterDTO registerDTO, HttpServletRequest request) {
+        String username = registerDTO.getUsername();
+        String password = registerDTO.getPassword();
+        if (password != null) {
+            registerDTO.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+            userAuthMapper.registerUser(registerDTO);
+
+            String accessToken = JWTUtils.generateToken(username, ACCESS_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
+            String refreshToken = JWTUtils.generateToken(username, REFRESH_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
+            userDetails.addToken(accessToken, username); //将token添加到userDetails
+            userDetails.addRefreshToken(refreshToken, username); //将refreshToken添加到userDetails
+            request.getSession().setAttribute("access_token", accessToken); //将token放到session中
+            request.getSession().setAttribute("refresh_token", refreshToken); //模拟将refreshToken返回前端，默认只返回一次
+            return true;
+        } else {
+            return false;
+        }
     }
 }

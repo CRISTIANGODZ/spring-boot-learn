@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>登录</title>
-  <link rel="stylesheet" href="../login.css">
+  <link rel="stylesheet" href="../static/css/login.css" th:href="@{/css/login.css}">
 </head>
 <body>
   <div>
@@ -18,5 +18,8 @@
     密码：<input type="password" name="password"></br>
     <input class="login-form-button" type="submit" value="登录">
   </form>
+  <div class="index-register">
+    <a href="http://localhost:8080/register"> 注册页面 </a>
+  </div>
 </body>
 </html>

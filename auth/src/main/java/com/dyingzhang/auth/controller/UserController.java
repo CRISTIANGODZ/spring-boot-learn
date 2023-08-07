@@ -1,11 +1,9 @@
 package com.dyingzhang.auth.controller;
 
-import com.dyingzhang.auth.component.UserDetails;
 import com.dyingzhang.auth.domain.dto.LoginDTO;
+import com.dyingzhang.auth.domain.dto.RegisterDTO;
 import com.dyingzhang.auth.service.UserService;
-import com.dyingzhang.auth.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,6 +33,11 @@ public class UserController {
         return new ModelAndView("login");
     }
 
+    @GetMapping("/register")
+    public ModelAndView register() {
+        return new ModelAndView("register");
+    }
+
     /**
      * 处理提交的登录表单
      * @param loginDTO
@@ -49,5 +52,12 @@ public class UserController {
 
         Boolean flag = userServiceImpl.loginDeal(username, password, request);
         return flag ? new ModelAndView("success") : new ModelAndView("fail");
+    }
+
+    @PostMapping("/register/submit")
+    public ModelAndView registerDeal(@ModelAttribute RegisterDTO registerDTO,
+                                     HttpServletRequest request) {
+        Boolean flag = userServiceImpl.registeDeal(registerDTO, request);
+        return flag ? new ModelAndView("index") : new ModelAndView("fail");
     }
 }

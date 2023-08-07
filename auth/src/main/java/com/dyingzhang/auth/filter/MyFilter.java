@@ -1,10 +1,8 @@
 package com.dyingzhang.auth.filter;
 
 import com.dyingzhang.auth.component.UserDetails;
-import com.dyingzhang.auth.controller.UserController;
 import com.dyingzhang.auth.service.impl.UserServiceImpl;
 import com.dyingzhang.auth.utils.JWTUtils;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +43,7 @@ public class MyFilter implements Filter {
             if (!JWTUtils.isTokenExpired(accessToken)) { //access_token未过期
                 String username = JWTUtils.parseToken(accessToken).getSubject(); //获取的token中的用户名
                 if (username.equals(userDetails.getToken(accessToken))) {
+                    log.info("登陆成功！");
                     filterChain.doFilter(servletRequest, servletResponse); //放行，放行后不能再重定向，否则会报错
                 } else { //校验失败
                     response.sendRedirect(request.getContextPath() + "/login");
@@ -80,6 +79,7 @@ public class MyFilter implements Filter {
                     String newAccessToken = JWTUtils.generateToken(username, UserServiceImpl.ACCESS_TOKEN_EXPIRATION); //签发新的accessToken
                     userDetails.addToken(newAccessToken, username); //将token添加到userDetails
                     session.setAttribute("access_token", newAccessToken); //添加到session中
+                    log.info("access_token重新签发，登录成功！");
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
                     response.sendRedirect(request.getContextPath() + "/login");

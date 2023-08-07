@@ -32,16 +32,10 @@ public class JWTUtils {
 
     public static boolean isTokenExpired(String token) {
         try {
-            // 解析Token
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-            // 获取Payload
             Claims claims = claimsJws.getBody();
-            // 获取过期时间
             Date expiration = claims.getExpiration();
-            // 获取当前时间
             Date now = new Date();
-
-            // 比较时间
             return expiration.before(now); // 如果过期时间在当前时间之前，返回true表示Token已过期
         } catch (Exception e) {
             // Token解析失败或格式错误等情况

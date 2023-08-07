@@ -10,9 +10,12 @@ spring:
     username: root
     password: Zdy!230003#
     driver-class-name: com.mysql.jdbc.Driver
+#  mvc:
+#    static-path-pattern: classpath:/static
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+
 
 
 mybatis:

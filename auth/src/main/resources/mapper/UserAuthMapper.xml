@@ -15,12 +15,19 @@
 
     <!--下面撰写sql语句-->
 
-    <!--        List<UserAuth> getUserByChecking(@Param(value = "username") String username);    -->
+    <!-- List<UserAuth> getUserByChecking(@Param(value = "username") String username); -->
     <select id="getUserByChecking" resultType="UserAuth">
         select id, username, password
         from user_auth
         where username = #{username}
     </select>
+
+    <!-- void registerUser(RegisterDTO registerDTO); -->
+    <insert id="registerUser" useGeneratedKeys="true" keyProperty="id">
+        insert into `user_auth` (`username`, `password`)
+        values (#{username}, #{password})
+    </insert>
+
 
     <!--上面撰写sql语句-->
 
