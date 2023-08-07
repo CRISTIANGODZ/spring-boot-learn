@@ -49,12 +49,7 @@ public class UserServiceImpl implements UserService {
         //遍历匹配密码
         for (UserAuth user : userList) {
             if (username.equals(user.getUsername()) && BCrypt.checkpw(password, user.getPassword())) {
-                String accessToken = JWTUtils.generateToken(username, ACCESS_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
-                String refreshToken = JWTUtils.generateToken(username, REFRESH_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
-                userDetails.addToken(accessToken, username); //将token添加到userDetails
-                userDetails.addRefreshToken(refreshToken, username); //将refreshToken添加到userDetails
-                request.getSession().setAttribute("access_token", accessToken); //将token放到session中
-                request.getSession().setAttribute("refresh_token", refreshToken); //模拟将refreshToken返回前端，默认只返回一次
+                signatureToken(user.getUsername(), request); //签发双token
                 return true;
             }
         }
@@ -69,15 +64,25 @@ public class UserServiceImpl implements UserService {
             registerDTO.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
             userAuthMapper.registerUser(registerDTO);
 
+            signatureToken(username, request); //签发双token
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Boolean signatureToken(String username, HttpServletRequest request) {
+        try {
             String accessToken = JWTUtils.generateToken(username, ACCESS_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
             String refreshToken = JWTUtils.generateToken(username, REFRESH_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
             userDetails.addToken(accessToken, username); //将token添加到userDetails
             userDetails.addRefreshToken(refreshToken, username); //将refreshToken添加到userDetails
             request.getSession().setAttribute("access_token", accessToken); //将token放到session中
             request.getSession().setAttribute("refresh_token", refreshToken); //模拟将refreshToken返回前端，默认只返回一次
-            return true;
-        } else {
-            return false;
+        } catch (Exception e) {
+            log.error("签发token出错！");
+            throw new RuntimeException(e);
         }
+        return true;
     }
 }
