@@ -1,9 +1,4 @@
-import com.dyingzhang.auth.component.EmailUtil;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.javamail.JavaMailSender;
 
 /**
  * @author DyingZhang

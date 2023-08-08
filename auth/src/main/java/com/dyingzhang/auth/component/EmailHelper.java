@@ -17,7 +17,7 @@ import java.io.File;
  * @discription
  */
 @Component
-public class EmailUtil {
+public class EmailHelper {
 
     @Value("${spring.mail.from}") // 从application.yml配置文件中获取
     private String from; // 发送发邮箱地址
