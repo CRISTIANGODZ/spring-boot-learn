@@ -77,6 +77,7 @@ public class UserServiceImpl implements UserService {
             String refreshToken = JWTUtils.generateToken(username, REFRESH_TOKEN_EXPIRATION); //签发token，expiration为过期时间(ms)
             userDetails.addToken(accessToken, username); //将token添加到userDetails
             userDetails.addRefreshToken(refreshToken, username); //将refreshToken添加到userDetails
+            log.info(accessToken);
             request.getSession().setAttribute("access_token", accessToken); //将token放到session中
             request.getSession().setAttribute("refresh_token", refreshToken); //模拟将refreshToken返回前端，默认只返回一次
         } catch (Exception e) {

@@ -4,6 +4,7 @@ import com.dyingzhang.auth.component.EmailHelper;
 import com.dyingzhang.auth.utils.VerificationCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -22,9 +23,9 @@ public class DataController {
         return "data";
     }
 
-    @GetMapping("/send-email")
-    public String sendEmail() {
-        String to = "2456909951@qq.com"; // 替换成收件人邮箱地址
+    @GetMapping("/send-email/{qq}")
+    public String sendEmail(@PathVariable(value = "qq") String qq) {
+        String to = qq +  "@qq.com"; // 替换成收件人邮箱地址
         String subject = "邮箱验证码";
 
         String text = VerificationCodeUtil.generateVerificationCode(6);

@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 40001
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://121.4.93.222:3306/auth?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
     username: root
-    password: Zdy!230003#
+    password: zdy123456
     driver-class-name: com.mysql.jdbc.Driver
 #  mvc:
 #    static-path-pattern: classpath:/static
@@ -28,6 +28,9 @@ spring:
         debug: true
     from: 1535661945@qq.com # 发送方邮件，配在yml中可方便更改
 
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.log4j.Log4jImpl
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.dyingzhang.auth.domain.entity

@@ -18,4 +18,5 @@ public class LoginDTO implements Serializable {
     private static final long serialVersionUID = 42L;
     private String username;
     private String password;
+    private String verCode;
 }
